@@ -291,6 +291,21 @@ Note dev cross-origin (Vite ↔ API): le client envoie `credentials: include` et
 - **Parcours nominal:** bouton **Terminer le parcours nominal** depuis l’atelier grille pour afficher cet ecran (sans dependre du multijoueur pour la completion).
 - **Reprise / abandon:** progression sauvegardee dans **`sessionStorage`** (`mousquetaire_solo_v1`) pour la session d’onglet — panneau **Reprendre** / **Recommencer depuis le debut** si progression incomplete ; texte d’aide sur les limites (fermeture onglet efface la memoire). Apres completion, **Recommencer le parcours** remet le flux au debut.
 
+## Assist IA — activation session et degradation gracieuse — FR19 / NFR-I1 (Story 6.1)
+
+- **Preference navigateur:** case **Assist IA** persistee en **`sessionStorage`** (`mousquetaire_ai_assist_pref_enabled`), **desactivee par defaut** — le jeu multijoueur / solo reste nominal sans IA.
+- **Sans secret client (NFR-S2):** aucune cle fournisseur dans `web/.env` ni dans le bundle ; la cle optionnelle **`MOUSQUETAIRE_AI_API_KEY`** est lue **uniquement** par l’API (`api/.env.example`).
+- **Endpoints:**
+  - `GET /ai/assist/status` — indique si une configuration serveur est presente (`assist_configured`), libelle non sensible (`assist_provider_label`), message utilisateur `message_fr`. Pas de log `http_request` support sur cette sonde (meme principe que `/health` et `.../state`).
+  - `POST /ai/assist/ping` — corps JSON `{ "assist_enabled_client": boolean }` ; reponse degradee si la preference client est activee mais le serveur n’est pas configure (`ok: false`, `latency_ms: null`, message clair). Si la preference est desactivee, reponse `ok: true` sans blocage.
+- **UI:** panneau sous les modes multijoueur / solo, **sans appel reseau au montage** ; boutons **Actualiser statut serveur** et **Verifier disponibilite assist** declenchent les appels (`web/src/lib/api.ts`, `web/src/lib/aiAssistPrefs.ts`).
+
+## Transparence usage IA — FR20 (Story 6.2)
+
+- **Section dédiée:** `#transparence-ia` dans `web/src/App.tsx` (meme gabarit que les panneaux legaux), joignable depuis le **pied de page** (**Transparence IA**) et depuis **En savoir plus** dans le panneau Assist IA (`aria-label` explicite pour l’accessibilité, **UX-DR13**).
+- **Contenu V1:** **perimetre** (IA optionnelle, jeu sans IA), **traitement** (pas de cle cote client, preference session navigateur), **limitations** (disponibilite / fiabilite, degradation sans blocage), precision sur les messages **Assist IA** comme diagnostics serveur et non suggestions grille tant que non prevues produit.
+- **Indicateur discret:** lorsqu'un message serveur s'affiche apres statut ou ping assist, une pastille **Assist IA** et une note courte (`data-testid="ai-assist-origin-note"`) identifient l'origine sans sur-promesse sur le gameplay.
+
 ## Hors scope de cette story
 
 - Logique métier room / game

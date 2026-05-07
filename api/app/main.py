@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import logging
+import os
 import secrets
 import threading
 from dataclasses import dataclass
@@ -62,6 +63,7 @@ async def correlation_middleware(request: Request, call_next):
     path = request.url.path
     skip_poll_http_log = request.method == "GET" and (
         path == "/health"
+        or path == "/ai/assist/status"
         or path.endswith("/state")
         or path.endswith("/mega-deck")
     )
@@ -80,6 +82,75 @@ async def correlation_middleware(request: Request, call_next):
 @app.get("/health")
 async def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+def _assist_api_key_configured() -> bool:
+    """Cle IA uniquement cote serveur (NFR-S2) — jamais exposee au client."""
+    key = (os.environ.get("MOUSQUETAIRE_AI_API_KEY") or "").strip()
+    return len(key) > 0
+
+
+class AiAssistPingRequest(BaseModel):
+    assist_enabled_client: bool = Field(description="Preference navigateur pour l'assist IA (session).")
+
+
+@app.get("/ai/assist/status")
+async def ai_assist_status() -> dict[str, object]:
+    configured = _assist_api_key_configured()
+    if configured:
+        message_fr = (
+            "Configuration serveur detectee pour l'assist IA. La cle reste uniquement cote serveur."
+        )
+        label: str | None = "serveur"
+    else:
+        message_fr = (
+            "Assist IA non configure sur ce serveur — partie nominale sans IA, sans blocage."
+        )
+        label = None
+    return {
+        "assist_configured": configured,
+        "assist_provider_label": label,
+        "message_fr": message_fr,
+    }
+
+
+@app.post("/ai/assist/ping")
+async def ai_assist_ping(body: AiAssistPingRequest) -> dict[str, object]:
+    """Verification legere (sans appel fournisseur externe) — degradation gracieuse."""
+    configured = _assist_api_key_configured()
+    t0 = time.monotonic()
+    latency_ms = round((time.monotonic() - t0) * 1000.0, 2)
+
+    if not body.assist_enabled_client:
+        return {
+            "ok": True,
+            "assist_enabled_client": False,
+            "assist_configured": configured,
+            "latency_ms": latency_ms,
+            "message_fr": (
+                "Assist IA desactive dans cette session navigateur — le jeu reste disponible."
+            ),
+        }
+
+    if not configured:
+        return {
+            "ok": False,
+            "assist_enabled_client": True,
+            "assist_configured": False,
+            "latency_ms": None,
+            "message_fr": (
+                "Assist IA indisponible: aucune configuration serveur. "
+                "Jouez sans IA — aucune cle dans le navigateur."
+            ),
+        }
+
+    return {
+        "ok": True,
+        "assist_enabled_client": True,
+        "assist_configured": True,
+        "latency_ms": latency_ms,
+        "message_fr": "Assist IA pret cote serveur (aucune cle envoyee au client).",
+    }
 
 
 @dataclass

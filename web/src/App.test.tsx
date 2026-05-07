@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, vi } from "vitest";
 
 import { MAX_PLAYERS_PER_ROOM, ROOM_CODE_LENGTH } from "./lib/gameLimits";
@@ -453,11 +453,20 @@ describe("App", () => {
 
     const cguLink = screen.getByRole("link", { name: "CGU" });
     const riskLink = screen.getByRole("link", { name: "Risques contenu" });
+    const footerNav = screen.getByLabelText("Liens legaux");
+    const transparencyFooterLink = within(footerNav).getByRole("link", {
+      name: "Transparence IA",
+    });
+    const assistTransparencyLink = screen.getByRole("link", {
+      name: /Transparence — usage de l'IA \(lien depuis le panneau assist\)/,
+    });
     const aboutLink = screen.getByRole("link", { name: "A propos" });
     const persistenceLink = screen.getByRole("link", { name: "Persistance V1" });
 
     expect(cguLink).toHaveAttribute("href", "#cgu");
     expect(riskLink).toHaveAttribute("href", "#risques-contenu");
+    expect(transparencyFooterLink).toHaveAttribute("href", "#transparence-ia");
+    expect(assistTransparencyLink).toHaveAttribute("href", "#transparence-ia");
     expect(aboutLink).toHaveAttribute("href", "#a-propos");
     expect(persistenceLink).toHaveAttribute("href", "#persistance-v1");
     expect(
@@ -465,6 +474,12 @@ describe("App", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByText(/Aucun filtre automatique n'est applique sur les mots des joueurs en V1/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /Transparence.*usage de l'IA/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Les fonctions d'assist IA sont/),
     ).toBeInTheDocument();
     expect(
       screen.getByText(

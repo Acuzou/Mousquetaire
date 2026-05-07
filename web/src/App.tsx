@@ -8,6 +8,8 @@ import {
   advanceTurn,
   continueRound,
   createRoom,
+  fetchAiAssistPing,
+  fetchAiAssistStatus,
   fetchMegaDeck,
   fetchRoomState,
   joinRoom,
@@ -18,6 +20,7 @@ import {
   withdrawClue,
   startGame,
 } from "./lib/api";
+import { readAiAssistSessionPref, writeAiAssistSessionPref } from "./lib/aiAssistPrefs";
 import { ApiRequestError } from "./lib/apiErrors";
 import { SoloLearning } from "./features/solo/SoloLearning";
 
@@ -124,6 +127,50 @@ function App() {
   );
   const [appShell, setAppShell] = useState<AppShell>("multi");
   const [supportDiagnosticRef, setSupportDiagnosticRef] = useState<string | null>(null);
+  const [aiAssistPrefEnabled, setAiAssistPrefEnabled] = useState(() =>
+    readAiAssistSessionPref(),
+  );
+  const [aiAssistServerMessage, setAiAssistServerMessage] = useState<string | null>(null);
+  const [aiAssistStatusLoading, setAiAssistStatusLoading] = useState(false);
+  const [aiAssistPingLoading, setAiAssistPingLoading] = useState(false);
+
+  const handleAiAssistPrefChange = (enabled: boolean) => {
+    writeAiAssistSessionPref(enabled);
+    setAiAssistPrefEnabled(enabled);
+  };
+
+  const handleRefreshAiAssistStatus = async () => {
+    setAiAssistStatusLoading(true);
+    setAiAssistServerMessage(null);
+    try {
+      const status = await fetchAiAssistStatus();
+      setAiAssistServerMessage(status.message_fr);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Impossible de joindre le serveur pour le statut assist IA.";
+      setAiAssistServerMessage(message);
+    } finally {
+      setAiAssistStatusLoading(false);
+    }
+  };
+
+  const handlePingAiAssist = async () => {
+    setAiAssistPingLoading(true);
+    try {
+      const ping = await fetchAiAssistPing(aiAssistPrefEnabled);
+      setAiAssistServerMessage(ping.message_fr);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Impossible de joindre le serveur pour la verification assist IA.";
+      setAiAssistServerMessage(message);
+    } finally {
+      setAiAssistPingLoading(false);
+    }
+  };
 
   const handleCreateRoom = async () => {
     if (isCreating || isJoining) {
@@ -1563,9 +1610,67 @@ function App() {
         ) : null}
           </>
         )}
+        <section className="ai-assist-panel" aria-labelledby="ai-assist-title">
+          <h2 id="ai-assist-title">Assist IA (session navigateur)</h2>
+          <p className="muted">
+            Opt-in par session — desactive par defaut. Aucune cle API dans le bundle web (NFR-S2) ;
+            configuration uniquement cote serveur.{" "}
+            <a
+              href="#transparence-ia"
+              className="inline-legal-link"
+              aria-label="Transparence — usage de l'IA (lien depuis le panneau assist)"
+            >
+              En savoir plus
+            </a>
+          </p>
+          <label className="ai-assist-toggle">
+            <input
+              type="checkbox"
+              checked={aiAssistPrefEnabled}
+              onChange={(event) => handleAiAssistPrefChange(event.target.checked)}
+              data-testid="ai-assist-pref-checkbox"
+            />
+            Activer la preference assist IA pour cet onglet
+          </label>
+          <div className="ai-assist-actions">
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={() => void handleRefreshAiAssistStatus()}
+              disabled={aiAssistStatusLoading}
+              data-testid="ai-assist-status-button"
+            >
+              {aiAssistStatusLoading ? "Chargement..." : "Actualiser statut serveur"}
+            </button>
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={() => void handlePingAiAssist()}
+              disabled={aiAssistPingLoading}
+              data-testid="ai-assist-ping-button"
+            >
+              {aiAssistPingLoading ? "Verification..." : "Verifier disponibilite assist"}
+            </button>
+          </div>
+          {aiAssistServerMessage ? (
+            <>
+              <p className="ai-origin-indicator" role="note" data-testid="ai-assist-origin-note">
+                <span className="ai-origin-chip">Assist IA</span>
+                <span>
+                  Diagnostic serveur (canal assist V1) — ne modifie pas directement la grille ni les
+                  tours.
+                </span>
+              </p>
+              <p className="muted ai-assist-server-msg" role="status" data-testid="ai-assist-message">
+                {aiAssistServerMessage}
+              </p>
+            </>
+          ) : null}
+        </section>
         <footer className="legal-footer" aria-label="Liens legaux">
           <a href="#cgu">CGU</a>
           <a href="#risques-contenu">Risques contenu</a>
+          <a href="#transparence-ia">Transparence IA</a>
           <a href="#a-propos">A propos</a>
           <a href="#persistance-v1">Persistance V1</a>
         </footer>
@@ -1585,6 +1690,39 @@ function App() {
           <p>
             Aucun filtre automatique n'est applique sur les mots des joueurs en V1. Certains
             contenus peuvent etre choquants: jouez uniquement avec des personnes de confiance.
+          </p>
+        </section>
+        <section
+          id="transparence-ia"
+          className="legal-panel"
+          aria-labelledby="transparence-ia-title"
+        >
+          <h2 id="transparence-ia-title">Transparence — usage de l'IA (V1)</h2>
+          <p>
+            <strong>Perimetre.</strong> Les fonctions d'assist IA sont{" "}
+            <strong>optionnelles</strong>. Le multijoueur et le mode apprentissage solo restent{" "}
+            <strong>pleinement jouables sans IA</strong>. En V1, le panneau « Assist IA » sert surtout
+            a <strong>verifier</strong> si le serveur expose un canal assist configure ; ce n'est pas
+            une promesse de fonctionnalites avancees dans la grille.
+          </p>
+          <p>
+            <strong>Traitement.</strong> Aucune cle fournisseur n'est incluse dans le site web ou le
+            bundle telecharge par le navigateur. Une cle eventuelle reste{" "}
+            <strong>uniquement cote serveur API</strong>. La case « preference assist » est stockee
+            dans la <strong>session du navigateur</strong> (fermeture d'onglet : la preference est
+            oubliee).
+          </p>
+          <p>
+            <strong>Limitations.</strong> Si des fonctions IA sont offertes plus tard, elles peuvent
+            etre <strong>indisponibles</strong>, <strong>lentes</strong> ou{" "}
+            <strong>imprecises</strong>. Le produit est concu pour{" "}
+            <strong>degrader sans bloquer</strong> la partie : messages clairs, jeu nominal sans IA.
+          </p>
+          <p className="muted">
+            Les retours affiches apres « Actualiser statut » ou « Verifier disponibilite » portent la
+            pastille <strong>Assist IA</strong> : il s'agit d'informations de diagnostic serveur, pas
+            de suggestions integrees aux cartes ou aux scores tant que la spec produit ne prevoit pas
+            cette couche.
           </p>
         </section>
         <section id="a-propos" className="legal-panel" aria-labelledby="about-title">

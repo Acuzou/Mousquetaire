@@ -180,6 +180,7 @@ p {
 .legal-footer {
   margin-top: 1.25rem;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 1rem;
 }
@@ -187,6 +188,13 @@ p {
 .legal-footer a {
   color: var(--primary);
   font-weight: 600;
+}
+
+.inline-legal-link {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .legal-panel {
@@ -452,6 +460,75 @@ p {
   font-weight: 600;
   font-size: 0.9rem;
   text-align: left;
+}
+
+.ai-assist-panel {
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+  text-align: left;
+}
+
+.ai-assist-panel h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  color: var(--foreground);
+}
+
+.ai-assist-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+
+.ai-assist-toggle input {
+  width: auto;
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+}
+
+.ai-assist-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.ai-assist-actions button {
+  margin-top: 0;
+}
+
+.ai-assist-server-msg {
+  margin-top: 0.75rem !important;
+}
+
+.ai-origin-indicator {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-align: left;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  line-height: 1.35;
+}
+
+.ai-origin-chip {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  border-radius: 0.35rem;
+  padding: 0.12rem 0.4rem;
+  background: var(--warning-surface);
+  color: var(--foreground);
 }
 
 .sr-only-live {

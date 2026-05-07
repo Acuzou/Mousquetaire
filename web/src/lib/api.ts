@@ -90,6 +90,44 @@ export type RoomStateResponse = {
   host_absence_grace_until_ms: number | null;
 };
 
+/** Statut configuration IA assisteur (FR19, NFR-I1 — sans cle dans le client). */
+export type AiAssistStatusResponse = {
+  assist_configured: boolean;
+  assist_provider_label: string | null;
+  message_fr: string;
+};
+
+/** Ping disponibilite assisteur (optionnel, degradé si non configuré). */
+export type AiAssistPingResponse = {
+  ok: boolean;
+  assist_enabled_client: boolean;
+  assist_configured: boolean;
+  latency_ms: number | null;
+  message_fr: string;
+};
+
+export async function fetchAiAssistStatus(): Promise<AiAssistStatusResponse> {
+  const response = await apiFetch(`${API_BASE_URL}/ai/assist/status`, {
+    credentials: "omit",
+    method: "GET",
+  });
+  await throwIfApiFailed(response, "Impossible de lire le statut assist IA.");
+  return response.json() as Promise<AiAssistStatusResponse>;
+}
+
+export async function fetchAiAssistPing(
+  assistEnabledClient: boolean,
+): Promise<AiAssistPingResponse> {
+  const response = await apiFetch(`${API_BASE_URL}/ai/assist/ping`, {
+    credentials: "omit",
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ assist_enabled_client: assistEnabledClient }),
+  });
+  await throwIfApiFailed(response, "Impossible de verifier la disponibilite assist IA.");
+  return response.json() as Promise<AiAssistPingResponse>;
+}
+
 export async function fetchHealth(): Promise<{ status: string }> {
   const response = await apiFetch(`${API_BASE_URL}/health`, {
     credentials: "omit",

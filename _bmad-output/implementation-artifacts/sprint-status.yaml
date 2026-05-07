@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: "2026-05-02T12:00:00"
-last_updated: "2026-05-08T16:00:00+02:00"
+last_updated: "2026-05-07T21:15:00+02:00"
 project: Mousquetaire
 project_key: NOKEY
 tracking_system: file-system
@@ -84,7 +84,7 @@ development_status:
   5-2-fin-du-parcours-pedagogique-nominal: done
   epic-5-retrospective: done
 
-  epic-6: backlog
-  6-1-activation-desactivation-des-fonctions-ia-et-degradation-gracieuse: backlog
-  6-2-transparence-sur-l-usage-de-l-ia: backlog
-  epic-6-retrospective: optional
+  epic-6: done
+  6-1-activation-desactivation-des-fonctions-ia-et-degradation-gracieuse: done
+  6-2-transparence-sur-l-usage-de-l-ia: done
+  epic-6-retrospective: done
