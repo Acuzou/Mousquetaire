@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: "2026-05-02T12:00:00"
-last_updated: "2026-05-07T18:15:00+02:00"
+last_updated: "2026-05-08T16:00:00+02:00"
 project: Mousquetaire
 project_key: NOKEY
 tracking_system: file-system
@@ -54,35 +54,35 @@ development_status:
   1-9-garde-fou-design-tokens-et-coherence-ds: done
   epic-1-retrospective: done
 
-  epic-2: in-progress
+  epic-2: done
   2-1-co-construction-du-mega-deck-en-limite-v1: done
-  2-2-conditions-minimales-et-demarrage-par-l-hote: backlog
-  2-3-variante-mousquetaire-p0: backlog
-  epic-2-retrospective: optional
+  2-2-conditions-minimales-et-demarrage-par-l-hote: done
+  2-3-variante-mousquetaire-p0: done
+  epic-2-retrospective: done
 
-  epic-3: backlog
-  3-1-tours-roles-et-indicateur-d-action-websocket-etat-autoritatif: backlog
-  3-2-donner-un-indice-cluecomposer: backlog
-  3-3-selection-de-cartes-sur-la-grille: backlog
-  3-4-revelation-synchronisee-et-etat-partage: backlog
-  3-5-roundresolution-fin-de-manche-revelation-sociale-et-cloture-avant-suite: backlog
-  3-6-resultat-de-manche-et-de-partie: backlog
-  3-7-retour-immediat-sur-actions-a-risque: backlog
-  3-8-reversibilite-d-une-action-recente-si-p0: backlog
-  epic-3-retrospective: optional
+  epic-3: done
+  3-1-tours-roles-et-indicateur-d-action-websocket-etat-autoritatif: done
+  3-2-donner-un-indice-cluecomposer: done
+  3-3-selection-de-cartes-sur-la-grille: done
+  3-4-revelation-synchronisee-et-etat-partage: done
+  3-5-roundresolution-fin-de-manche-revelation-sociale-et-cloture-avant-suite: done
+  3-6-resultat-de-manche-et-de-partie: done
+  3-7-retour-immediat-sur-actions-a-risque: done
+  3-8-reversibilite-d-une-action-recente-si-p0: done
+  epic-3-retrospective: done
 
-  epic-4: backlog
-  4-1-quitter-la-salle-ou-la-session-selon-les-regles-de-fin: backlog
-  4-2-rejoindre-en-cours-avec-statut-clair: backlog
-  4-3-reconnexion-et-resynchronisation-sans-corruption-du-tour: backlog
-  4-4-detection-depart-deconnexion-de-l-hote-et-retours-explicites: backlog
-  4-5-diagnostic-et-correlation-pour-le-support: backlog
-  epic-4-retrospective: optional
+  epic-4: done
+  4-1-quitter-la-salle-ou-la-session-selon-les-regles-de-fin: done
+  4-2-rejoindre-en-cours-avec-statut-clair: done
+  4-3-reconnexion-et-resynchronisation-sans-corruption-du-tour: done
+  4-4-detection-depart-deconnexion-de-l-hote-et-retours-explicites: done
+  4-5-diagnostic-et-correlation-pour-le-support: done
+  epic-4-retrospective: done
 
-  epic-5: backlog
-  5-1-parcours-d-apprentissage-sans-multijoueur-obligatoire: backlog
-  5-2-fin-du-parcours-pedagogique-nominal: backlog
-  epic-5-retrospective: optional
+  epic-5: done
+  5-1-parcours-d-apprentissage-sans-multijoueur-obligatoire: done
+  5-2-fin-du-parcours-pedagogique-nominal: done
+  epic-5-retrospective: done
 
   epic-6: backlog
   6-1-activation-desactivation-des-fonctions-ia-et-degradation-gracieuse: backlog
