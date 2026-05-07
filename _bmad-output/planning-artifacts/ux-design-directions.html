@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mousquetaire — Directions de design UX</title>
+  <style>
+    :root {
+      --nav-h: 52px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: #1a1a1a;
+      color: #eee;
+    }
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-h);
+      background: #111;
+      border-bottom: 1px solid #333;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0 1rem;
+      flex-wrap: wrap;
+      z-index: 100;
+    }
+    nav a {
+      color: #9cf;
+      text-decoration: none;
+      font-size: 0.85rem;
+      padding: 0.35rem 0.6rem;
+      border-radius: 6px;
+    }
+    nav a:hover { background: #222; }
+    nav span.title {
+      font-weight: 600;
+      margin-right: 0.5rem;
+      font-size: 0.9rem;
+    }
+    section.mock {
+      min-height: 100vh;
+      padding: calc(var(--nav-h) + 1.5rem) 1.25rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    section.mock h2 {
+      margin: 0 0 0.25rem;
+      font-size: 1.35rem;
+    }
+    section.mock .tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      opacity: 0.85;
+      margin-bottom: 1rem;
+    }
+    section.mock .desc {
+      max-width: 42rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+      font-size: 0.95rem;
+      opacity: 0.95;
+    }
+    .frame {
+      width: min(100%, 420px);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+      transition: transform 0.2s ease;
+    }
+    .frame:hover { transform: translateY(-2px); }
+    .ui-top {
+      padding: 0.75rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+    }
+    .ui-body { padding: 1rem; }
+    .clue {
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      border-radius: 10px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+    }
+    .card {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-align: center;
+      padding: 0.35rem;
+      cursor: default;
+      transition: transform 0.15s ease;
+    }
+    .card:hover { transform: scale(1.03); }
+    .btn-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 0.55rem 1rem;
+      border-radius: 999px;
+      border: none;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    /* Direction A — Salon chaleureux */
+    #dir-a { background: linear-gradient(160deg, #f5efe6 0%, #ebe3d7 100%); color: #2c2419; }
+    #dir-a .frame { background: #faf7f2; border: 1px solid #ddd5c8; }
+    #dir-a .ui-top { background: #efe8dc; color: #5c4a38; }
+    #dir-a .clue { background: #fff8ee; border: 1px solid #e8dcc8; color: #4a3d2e; }
+    #dir-a .card { background: #fff; border: 1px solid #e5ddd0; color: #3d3429; }
+    #dir-a .btn-primary { background: #c45c26; color: #fff; }
+    #dir-a .btn-ghost { background: transparent; color: #7a5c45; border: 1px solid #c9bba8; }
+
+    /* Direction B — Cartes contrastées */
+    #dir-b { background: #f0f4f8; color: #0f172a; }
+    #dir-b .frame { background: #fff; border: 2px solid #0f172a; }
+    #dir-b .ui-top { background: #0f172a; color: #f8fafc; }
+    #dir-b .clue { background: #e0f2fe; border: 2px solid #0369a1; color: #0c4a6e; }
+    #dir-b .card { background: #f1f5f9; border: 2px solid #64748b; color: #1e293b; }
+    #dir-b .btn-primary { background: #0369a1; color: #fff; }
+    #dir-b .btn-ghost { background: #fff; color: #0f172a; border: 2px solid #0f172a; }
+
+    /* Direction C — Dense tactique */
+    #dir-c { background: #e8e4dc; color: #222; }
+    #dir-c .frame { background: #fdfcfa; border: 1px solid #bbb; max-width: 380px; }
+    #dir-c .ui-top { padding: 0.5rem 0.75rem; font-size: 0.72rem; background: #dcd6cc; }
+    #dir-c .ui-body { padding: 0.65rem; }
+    #dir-c .clue { font-size: 0.95rem; padding: 0.5rem; margin-bottom: 0.65rem; background: #fff; border: 1px solid #aaa; }
+    #dir-c .grid { gap: 0.35rem; }
+    #dir-c .card { font-size: 0.68rem; border-radius: 6px; aspect-ratio: 1; }
+    #dir-c .btn { padding: 0.45rem 0.75rem; font-size: 0.72rem; }
+    #dir-c .btn-primary { background: #444; color: #fff; }
+    #dir-c .btn-ghost { background: #eee; color: #222; border: 1px solid #888; }
+
+    /* Direction D — Aéré minimal */
+    #dir-d { background: #fafafa; color: #262626; }
+    #dir-d .frame { background: #fff; border: 1px solid #e5e5e5; box-shadow: 0 4px 24px rgba(0,0,0,0.06); max-width: 400px; }
+    #dir-d .ui-top { background: transparent; padding-top: 1.25rem; font-size: 0.78rem; color: #737373; }
+    #dir-d .clue { background: transparent; border: none; font-size: 1.25rem; letter-spacing: -0.02em; color: #171717; }
+    #dir-d .grid { gap: 0.75rem; }
+    #dir-d .card { background: #fafafa; border: 1px solid #e5e5e5; font-weight: 500; color: #404040; }
+    #dir-d .btn-primary { background: #171717; color: #fff; }
+    #dir-d .btn-ghost { background: #fff; color: #525252; border: 1px solid #d4d4d4; }
+
+    /* Direction E — Équipes teintées */
+    #dir-e { background: #1e293b; color: #e2e8f0; }
+    #dir-e .frame { background: linear-gradient(180deg, #334155 0%, #1e293b 40%); border: 1px solid #475569; }
+    #dir-e .ui-top { background: rgba(59,130,246,0.25); border-bottom: 1px solid #475569; }
+    #dir-e .clue { background: rgba(251,191,36,0.15); border: 1px solid #fbbf24; color: #fef3c7; }
+    #dir-e .card.team-a { background: rgba(59,130,246,0.35); border: 1px solid #60a5fa; color: #dbeafe; }
+    #dir-e .card.team-b { background: rgba(244,63,94,0.25); border: 1px solid #fb7185; color: #ffe4e6; }
+    #dir-e .card.neutral { background: #334155; border: 1px solid #64748b; color: #f1f5f9; }
+    #dir-e .btn-primary { background: #3b82f6; color: #fff; }
+    #dir-e .btn-ghost { background: transparent; color: #94a3b8; border: 1px solid #64748b; }
+
+    /* Direction F — Soirée tamisée */
+    #dir-f { background: linear-gradient(180deg, #2d2640 0%, #1a1526 100%); color: #e8e4f0; }
+    #dir-f .frame { background: rgba(45,38,64,0.85); border: 1px solid #5c4d78; backdrop-filter: blur(8px); }
+    #dir-f .ui-top { background: rgba(0,0,0,0.25); color: #d4c8e8; }
+    #dir-f .clue { background: rgba(180,83,9,0.35); border: 1px solid #d97706; color: #fef3c7; }
+    #dir-f .card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: #f5f3ff; }
+    #dir-f .btn-primary { background: #d97706; color: #1c1410; }
+    #dir-f .btn-ghost { background: transparent; color: #c4b5fd; border: 1px solid #7c6aaa; }
+
+    /* Direction G — Mobile-first empilé */
+    #dir-g { background: #eef2ff; color: #312e81; }
+    #dir-g .frame { max-width: 340px; background: #fff; border-radius: 24px; border: 4px solid #312e81; }
+    #dir-g .ui-top { flex-direction: column; gap: 0.35rem; align-items: stretch; text-align: center; background: #312e81; color: #eef2ff; border-radius: 20px 20px 0 0; margin: -1px -1px 0 -1px; }
+    #dir-g .clue { order: -1; margin-bottom: 0.75rem; background: #eef2ff; border: none; color: #312e81; }
+    #dir-g .ui-body { display: flex; flex-direction: column; gap: 0.75rem; }
+    #dir-g .grid { order: 1; }
+    #dir-g .btn-row { order: 2; margin-top: 0; }
+    #dir-g .card { border-radius: 14px; font-size: 0.72rem; }
+    #dir-g .btn-primary { background: #4f46e5; color: #fff; width: 100%; }
+    #dir-g .btn-ghost { background: #fff; color: #4338ca; border: 2px solid #4f46e5; width: 100%; }
+
+    /* Direction H — Split desktop */
+    #dir-h { background: #ecfdf5; color: #064e3b; }
+    #dir-h .frame {
+      max-width: 560px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #a7f3d0;
+    }
+    #dir-h .pane-left {
+      background: #fff;
+      padding: 1rem;
+      border-right: 1px solid #d1fae5;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    #dir-h .pane-right {
+      background: #f0fdf4;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    #dir-h .ui-top { grid-column: 1 / -1; background: #059669; color: #ecfdf5; border-radius: 0; }
+    #dir-h .clue { margin: 0; font-size: 0.95rem; background: #ecfdf5; border: 1px solid #6ee7b7; }
+    #dir-h .grid { grid-template-columns: repeat(2, 1fr); }
+    #dir-h .card { background: #fff; border: 1px solid #bbf7d0; color: #166534; }
+    #dir-h .btn-primary { background: #059669; color: #fff; }
+    #dir-h .btn-ghost { background: transparent; color: #047857; border: 1px solid #059669; }
+    @media (max-width: 520px) {
+      #dir-h .frame { grid-template-columns: 1fr; max-width: 400px; }
+      #dir-h .pane-left { border-right: none; border-bottom: 1px solid #d1fae5; }
+    }
+    .compare-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #111;
+      border-top: 1px solid #333;
+      padding: 0.5rem 1rem;
+      font-size: 0.78rem;
+      color: #aaa;
+      text-align: center;
+      z-index: 99;
+    }
+    .compare-bar strong { color: #fff; }
+  </style>
+</head>
+<body>
+  <nav>
+    <span class="title">Directions</span>
+    <a href="#dir-a">A Salon</a>
+    <a href="#dir-b">B Contraste</a>
+    <a href="#dir-c">C Dense</a>
+    <a href="#dir-d">D Minimal</a>
+    <a href="#dir-e">E Équipes</a>
+    <a href="#dir-f">F Tamisé</a>
+    <a href="#dir-g">G Mobile</a>
+    <a href="#dir-h">H Split</a>
+  </nav>
+
+  <section class="mock" id="dir-a">
+    <span class="tag">Direction A</span>
+    <h2>Salon chaleureux</h2>
+    <p class="desc">Fonds crème / parchemin, cartes blanches douces, primaire ambre-rouille. Ambiance « soirée entre amis », lisible sans froideur dashboard.</p>
+    <div class="frame">
+      <div class="ui-top"><span>Partie · Salon des amis</span><span>Tour ⓘ</span></div>
+      <div class="ui-body">
+        <div class="clue">Indice : « Ça se mange le matin »</div>
+        <div class="grid">
+          <div class="card">Croissant</div>
+          <div class="card">Chausson</div>
+          <div class="card">Pain</div>
+          <div class="card">Confiture</div>
+          <div class="card">Beurre</div>
+          <div class="card">Noir</div>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn btn-primary">Valider</button>
+          <button type="button" class="btn btn-ghost">Passer</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mock" id="dir-b">
+    <span class="tag">Direction B</span>
+    <h2>Cartes contrastées</h2>
+    <p class="desc">Barre d’en-tête foncée, zone indice encadrée forte, grille à bords nets. Priorité à la hiérarchie et au WCAG.</p>
+    <div class="frame">
+      <div class="ui-top"><span>Mousquetaire</span><span>Équipe A</span></div>
+      <div class="ui-body">
+        <div class="clue">Indice du donneur</div>
+        <div class="grid">
+          <div class="card">Mot 1</div>
+          <div class="card">Mot 2</div>
+          <div class="card">Mot 3</div>
+          <div class="card">Mot 4</div>
+          <div class="card">Mot 5</div>
+          <div class="card">Noir</div>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn btn-primary">Envoyer l’indice</button>
+          <button type="button" class="btn btn-ghost">Annuler</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mock" id="dir-c">
+    <span class="tag">Direction C</span>
+    <h2>Dense tactique</h2>
+    <p class="desc">Grille resserrée, plus de mots visibles sans scroll, boutons compacts. Pour sessions rapides et joueurs expérimentés.</p>
+    <div class="frame">
+      <div class="ui-top"><span>Partie · 02:14</span><span>Devineur</span></div>
+      <div class="ui-body">
+        <div class="clue">Indice court</div>
+        <div class="grid">
+          <div class="card">A</div><div class="card">B</div><div class="card">C</div>
+          <div class="card">D</div><div class="card">E</div><div class="card">—</div>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn btn-primary">OK</button>
+          <button type="button" class="btn btn-ghost">Plus tard</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mock" id="dir-d">
+    <span class="tag">Direction D</span>
+    <h2>Aéré minimal</h2>
+    <p class="desc">Beaucoup d’air, typographie expressive pour l’indice, cartes discrètes. Réduit le bruit visuel ; accent sur le texte.</p>
+    <div class="frame">
+      <div class="ui-top"><span>Salle publique</span><span></span></div>
+      <div class="ui-body">
+        <div class="clue">Un seul grand indice ici</div>
+        <div class="grid">
+          <div class="card">α</div>
+          <div class="card">β</div>
+          <div class="card">γ</div>
+          <div class="card">δ</div>
+          <div class="card">ε</div>
+          <div class="card">✕</div>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn btn-primary">Continuer</button>
+          <button type="button" class="btn btn-ghost">Retour</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mock" id="dir-e">
+    <span class="tag">Direction E</span>
+    <h2>Équipes teintées</h2>
+    <p class="desc">Fond slate, cartes teintées bleu / rose selon équipe + neutres. Renforce les rôles ; toujours doubler couleur par libellé.</p>
+    <div class="frame">
+      <div class="ui-top"><span>Manche 3</span><span>A vs B</span></div>
+      <div class="ui-body">
+        <div class="clue">Indice équitable</div>
+        <div class="grid">
+          <div class="card team-a">Bleu</div>
+          <div class="card neutral">Neutre</div>
+          <div class="card team-b">Rouge</div>
+          <div class="card team-a">Bleu</div>
+          <div class="card neutral">Neutre</div>
+          <div class="card team-b">Assassin</div>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn btn-primary">Révéler</button>
+          <button type="button" class="btn btn-ghost">Historique</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mock" id="dir-f">
+    <span class="tag">Direction F</span>
+    <h2>Soirée tamisée</h2>
+    <p class="desc">Ambiance nocturne chaude (violet / ambre). Pour usage en pièce peu éclairée ; contraste indice renforcé.</p>
+    <div class="frame">
+      <div class="ui-top"><span>Nuit · locale</span><span>🔒</span></div>
+      <div class="ui-body">
+        <div class="clue">Indice dans une capsule lumineuse</div>
+        <div class="grid">
+          <div class="card">Un</div>
+          <div class="card">Deux</div>
+          <div class="card">Trois</div>
+          <div class="card">Quatre</div>
+          <div class="card">Cinq</div>
+          <div class="card">Mort</div>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn btn-primary">Confirmer</button>
+          <button type="button" class="btn btn-ghost">Règles</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mock" id="dir-g">
+    <span class="tag">Direction G</span>
+    <h2>Mobile-first empilé</h2>
+    <p class="desc">Une colonne, indice au-dessus, grille puis actions pleine largeur. Optimisé pouce-gauche / portrait.</p>
+    <div class="frame">
+      <div class="ui-top">
+        <span>Mousquetaire</span>
+        <span>Salle #42 · 4 joueurs</span>
+      </div>
+      <div class="ui-body">
+        <div class="clue">Indice visible en premier</div>
+        <div class="grid">
+          <div class="card">1</div><div class="card">2</div><div class="card">3</div>
+          <div class="card">4</div><div class="card">5</div><div class="card">✖</div>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn btn-primary">Action principale</button>
+          <button type="button" class="btn btn-ghost">Secondaire</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mock" id="dir-h">
+    <span class="tag">Direction H</span>
+    <h2>Split desktop</h2>
+    <p class="desc">Panneau jeu + panneau contexte (chat / scores / tour). Pour écrans larges ; se replie en pile sur petit viewport.</p>
+    <div class="frame">
+      <div class="ui-top" style="grid-column: 1 / -1;"><span>Partie desktop</span><span>Outils</span></div>
+      <div class="pane-left">
+        <div class="clue">Indice à gauche</div>
+        <div class="grid">
+          <div class="card">A</div><div class="card">B</div><div class="card">C</div>
+          <div class="card">D</div><div class="card">E</div><div class="card">X</div>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn btn-primary">Valider</button>
+        </div>
+      </div>
+      <div class="pane-right">
+        <p style="margin:0;font-size:0.85rem;line-height:1.45;color:#166534;">Zone secondaire : chat, file d’indices, scores — même style tokens.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="compare-bar">
+    <strong>Mousquetaire</strong> — 8 directions · ouvrir ce fichier en local pour défiler · critères : hiérarchie, densité, brand, navigation, accessibilité
+  </div>
+</body>
+</html>

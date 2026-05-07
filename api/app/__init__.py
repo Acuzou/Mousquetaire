@@ -1,0 +1,1 @@
+"""Mousquetaire API package."""

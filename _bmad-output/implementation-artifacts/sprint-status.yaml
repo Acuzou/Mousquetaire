@@ -1,0 +1,90 @@
+# generated: 2026-05-02T12:00:00
+# last_updated: 2026-05-07T17:18:20+02:00
+# project: Mousquetaire
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: {project-root}/_bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - Developer typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: "2026-05-02T12:00:00"
+last_updated: "2026-05-07T18:15:00+02:00"
+project: Mousquetaire
+project_key: NOKEY
+tracking_system: file-system
+story_location: "{project-root}/_bmad-output/implementation-artifacts"
+
+development_status:
+  epic-1: done
+  1-1-bootstrap-depot-ci-et-socle-technique: done
+  1-2-creer-une-salle-et-obtenir-un-code: done
+  1-3-rejoindre-une-salle-avec-code-et-pseudo: done
+  1-4-cgu-risques-contenu-et-pied-de-page-legal: done
+  1-5-a-propos-version-et-notes: done
+  1-6-francais-ui-absence-de-compte-obligatoire-et-persistance-v1: done
+  1-7-avertissement-navigateur-hors-matrice: done
+  1-8-limites-code-de-salle-et-taille-de-groupe: done
+  1-9-garde-fou-design-tokens-et-coherence-ds: done
+  epic-1-retrospective: done
+
+  epic-2: in-progress
+  2-1-co-construction-du-mega-deck-en-limite-v1: done
+  2-2-conditions-minimales-et-demarrage-par-l-hote: backlog
+  2-3-variante-mousquetaire-p0: backlog
+  epic-2-retrospective: optional
+
+  epic-3: backlog
+  3-1-tours-roles-et-indicateur-d-action-websocket-etat-autoritatif: backlog
+  3-2-donner-un-indice-cluecomposer: backlog
+  3-3-selection-de-cartes-sur-la-grille: backlog
+  3-4-revelation-synchronisee-et-etat-partage: backlog
+  3-5-roundresolution-fin-de-manche-revelation-sociale-et-cloture-avant-suite: backlog
+  3-6-resultat-de-manche-et-de-partie: backlog
+  3-7-retour-immediat-sur-actions-a-risque: backlog
+  3-8-reversibilite-d-une-action-recente-si-p0: backlog
+  epic-3-retrospective: optional
+
+  epic-4: backlog
+  4-1-quitter-la-salle-ou-la-session-selon-les-regles-de-fin: backlog
+  4-2-rejoindre-en-cours-avec-statut-clair: backlog
+  4-3-reconnexion-et-resynchronisation-sans-corruption-du-tour: backlog
+  4-4-detection-depart-deconnexion-de-l-hote-et-retours-explicites: backlog
+  4-5-diagnostic-et-correlation-pour-le-support: backlog
+  epic-4-retrospective: optional
+
+  epic-5: backlog
+  5-1-parcours-d-apprentissage-sans-multijoueur-obligatoire: backlog
+  5-2-fin-du-parcours-pedagogique-nominal: backlog
+  epic-5-retrospective: optional
+
+  epic-6: backlog
+  6-1-activation-desactivation-des-fonctions-ia-et-degradation-gracieuse: backlog
+  6-2-transparence-sur-l-usage-de-l-ia: backlog
+  epic-6-retrospective: optional

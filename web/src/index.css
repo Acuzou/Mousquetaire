@@ -1,0 +1,177 @@
+:root {
+  --background: #faf9ff;
+  --card: #ffffff;
+  --foreground: #111827;
+  --muted: #6b7280;
+  --primary: #5b2dcf;
+  --border: #e5e7eb;
+  --destructive: #b91c1c;
+  --focus-ring: #2563eb;
+  --warning-surface: #fff7ed;
+  --turn-active: #0f766e;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.layout {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.card {
+  width: min(640px, 100%);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+button {
+  margin-top: 1rem;
+  border: 1px solid var(--border);
+  background: var(--primary);
+  color: var(--card);
+  border-radius: 0.5rem;
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.55rem 0.7rem;
+  margin-top: 0.25rem;
+}
+
+label {
+  margin-top: 0.9rem;
+  display: block;
+  text-align: left;
+  font-weight: 600;
+}
+
+.join-form {
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.join-form button {
+  width: 100%;
+}
+
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+h1 {
+  margin: 0 0 1rem;
+  color: var(--primary);
+}
+
+p {
+  margin: 0;
+}
+
+.muted {
+  margin-top: 0.5rem;
+  color: var(--muted);
+}
+
+.room-code {
+  margin-top: 1rem;
+}
+
+.error-message {
+  margin-top: 1rem;
+  color: var(--destructive);
+}
+
+.browser-warning {
+  margin-bottom: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.8rem;
+  background: var(--warning-surface);
+  text-align: left;
+}
+
+.browser-warning p {
+  margin-bottom: 0.45rem;
+}
+
+.browser-warning button {
+  margin-top: 0.5rem;
+}
+
+.legal-footer {
+  margin-top: 1.25rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.legal-footer a {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.legal-panel {
+  margin-top: 1rem;
+  text-align: left;
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+}
+
+.legal-panel h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.mega-deck-panel {
+  margin-top: 1rem;
+  text-align: left;
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+}
+
+.mega-deck-panel h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  color: var(--turn-active);
+}
+
+.mega-deck-input-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.mega-deck-list {
+  margin-top: 0.75rem;
+  padding-left: 1.2rem;
+}

@@ -1,0 +1,10 @@
+{
+  "name": "mousquetaire",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "lint": "npm --prefix web run lint && python -m ruff check api",
+    "typecheck": "npm --prefix web run typecheck",
+    "test": "npm --prefix web run test:run && python -m pytest api/tests"
+  }
+}
