@@ -9,6 +9,20 @@ Socle initial du projet pour Story `1.1-bootstrap-depot-ci-et-socle-technique`.
 
 ## Frontend (`web/`)
 
+### Demarrage API + web (logs prefixes)
+
+A la racine du depot, apres `npm install` (racine) et dependances `web` / Python API installees :
+
+```powershell
+.\dev.ps1
+```
+
+ou `npm run dev` — lance **FastAPI** sur `http://127.0.0.1:8000` et **Vite** sur `http://127.0.0.1:5173` dans le meme terminal, avec prefixes `[api]` et `[web]`. `Ctrl+C` arrete les deux (`-k`).
+
+Sous macOS/Linux : `chmod +x dev.sh` puis `./dev.sh` (equivalent).
+
+### Frontend seul
+
 ```powershell
 cd web
 npm install
@@ -279,26 +293,18 @@ Note dev cross-origin (Vite ↔ API): le client envoie `credentials: include` et
 - **Sequences partie:** les diffusions WS cote diagnostic incluent une ligne **`ws_broadcast`** pour les evenements sensibles (`participant_joined`, `participant_left`, transferts hote passifs, fin de partie / resolution de manche, etc.) avec `room_id`, `room_code`, `turn_version`, nombre d'abonnes.
 - **Client web:** en-tete **`X-Correlation-ID`** envoye sur chaque appel REST (`web/src/lib/api.ts`) ; WebSocket avec **`correlation_id`** ; affichage optionnel de la reference diagnostic (`data-testid="support-diagnostic-ref"`).
 
-## Apprentissage solo — FR17 (Story 5.1)
+## Mode apprentissage solo (FR17 / FR18) — retire en V2 client
 
-- **Acces:** depuis l’UI principale, onglets **Multijoueur** / **Apprentissage solo** (`data-testid="solo-mode-tab"`).
-- **Parcours:** etapes textuelles hors code de salle, puis **atelier grille** local (`web/src/features/solo/SoloLearning.tsx`) avec les memes classes **`word-grid`**, **`word-card`**, selection / **Reveler la selection**, toast et mentions d’irreversibilite — alignes sur le multijoueur (UX-DR10).
-- **Backend:** aucune API obligatoire pour ce mode en V1 ; la progression est entierement cote client.
-
-## Fin du parcours pedagogique nominal — FR18 (Story 5.2)
-
-- **Ecran de fin:** panneau **`solo-completion-panel`** (`data-testid`) avec titre, felicitations, **liste recap** et bouton **Retour au mode multijoueur**.
-- **Parcours nominal:** bouton **Terminer le parcours nominal** depuis l’atelier grille pour afficher cet ecran (sans dependre du multijoueur pour la completion).
-- **Reprise / abandon:** progression sauvegardee dans **`sessionStorage`** (`mousquetaire_solo_v1`) pour la session d’onglet — panneau **Reprendre** / **Recommencer depuis le debut** si progression incomplete ; texte d’aide sur les limites (fermeture onglet efface la memoire). Apres completion, **Recommencer le parcours** remet le flux au debut.
+- **V2 :** le parcours **apprentissage solo** a ete **retire du client web** (plus d’onglet ni de `SoloLearning`). Les exigences historiques **Story 5.1 / 5.2** ne decrivent plus l’UI courante ; le **multijoueur** reste le seul mode dans l’application.
 
 ## Assist IA — activation session et degradation gracieuse — FR19 / NFR-I1 (Story 6.1)
 
-- **Preference navigateur:** case **Assist IA** persistee en **`sessionStorage`** (`mousquetaire_ai_assist_pref_enabled`), **desactivee par defaut** — le jeu multijoueur / solo reste nominal sans IA.
+- **Preference navigateur:** case **Assist IA** persistee en **`sessionStorage`** (`mousquetaire_ai_assist_pref_enabled`), **desactivee par defaut** — le jeu multijoueur reste nominal sans IA.
 - **Sans secret client (NFR-S2):** aucune cle fournisseur dans `web/.env` ni dans le bundle ; la cle optionnelle **`MOUSQUETAIRE_AI_API_KEY`** est lue **uniquement** par l’API (`api/.env.example`).
 - **Endpoints:**
   - `GET /ai/assist/status` — indique si une configuration serveur est presente (`assist_configured`), libelle non sensible (`assist_provider_label`), message utilisateur `message_fr`. Pas de log `http_request` support sur cette sonde (meme principe que `/health` et `.../state`).
   - `POST /ai/assist/ping` — corps JSON `{ "assist_enabled_client": boolean }` ; reponse degradee si la preference client est activee mais le serveur n’est pas configure (`ok: false`, `latency_ms: null`, message clair). Si la preference est desactivee, reponse `ok: true` sans blocage.
-- **UI:** panneau sous les modes multijoueur / solo, **sans appel reseau au montage** ; boutons **Actualiser statut serveur** et **Verifier disponibilite assist** declenchent les appels (`web/src/lib/api.ts`, `web/src/lib/aiAssistPrefs.ts`).
+- **UI:** panneau sous le flux multijoueur principal, **sans appel reseau au montage** ; boutons **Actualiser statut serveur** et **Verifier disponibilite assist** declenchent les appels (`web/src/lib/api.ts`, `web/src/lib/aiAssistPrefs.ts`).
 
 ## Transparence usage IA — FR20 (Story 6.2)
 

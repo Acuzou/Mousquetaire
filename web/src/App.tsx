@@ -22,10 +22,7 @@ import {
 } from "./lib/api";
 import { readAiAssistSessionPref, writeAiAssistSessionPref } from "./lib/aiAssistPrefs";
 import { ApiRequestError } from "./lib/apiErrors";
-import { SoloLearning } from "./features/solo/SoloLearning";
-
 const APP_VERSION = __APP_VERSION__;
-type AppShell = "multi" | "solo";
 type TurnAggregate = {
   version: number;
   activeParticipantId: string | null;
@@ -103,8 +100,8 @@ function App() {
   const [isLeavingRoom, setIsLeavingRoom] = useState(false);
   const [joinCapacity, setJoinCapacity] = useState<JoinCapacity>("lobby");
   const [joinStatusDetail, setJoinStatusDetail] = useState<string | null>(null);
-  /** Incrementé pendant RoundResolution pour rafraîchir le décompte affiché */
-  const [roundResolutionBeatTick, setRoundResolutionBeatTick] = useState(0);
+  /** Horloge affichage (hors effet render pur) pour decomptes round resolution / grace hote */
+  const [displayTickMs, setDisplayTickMs] = useState(() => Date.now());
   const [clueInput, setClueInput] = useState("");
   const [isSubmittingClue, setIsSubmittingClue] = useState(false);
   const [clueErrorMessage, setClueErrorMessage] = useState<string | null>(null);
@@ -116,7 +113,6 @@ function App() {
   const [roundContinueRiskFeedback, setRoundContinueRiskFeedback] = useState<string | null>(null);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
   const [hostAbsenceGraceUntilMs, setHostAbsenceGraceUntilMs] = useState<number | null>(null);
-  const [hostGraceBannerTick, setHostGraceBannerTick] = useState(0);
   type LiveEventsMode = "idle" | "connected" | "reconnecting" | "paused";
   const [liveEventsMode, setLiveEventsMode] = useState<LiveEventsMode>("idle");
   const wsHadOpenedInEffectRef = useRef(false);
@@ -125,7 +121,6 @@ function App() {
   const [showBrowserWarning, setShowBrowserWarning] = useState(() =>
     isOutsideBrowserMatrix(globalThis.navigator?.userAgent ?? ""),
   );
-  const [appShell, setAppShell] = useState<AppShell>("multi");
   const [supportDiagnosticRef, setSupportDiagnosticRef] = useState<string | null>(null);
   const [aiAssistPrefEnabled, setAiAssistPrefEnabled] = useState(() =>
     readAiAssistSessionPref(),
@@ -133,6 +128,25 @@ function App() {
   const [aiAssistServerMessage, setAiAssistServerMessage] = useState<string | null>(null);
   const [aiAssistStatusLoading, setAiAssistStatusLoading] = useState(false);
   const [aiAssistPingLoading, setAiAssistPingLoading] = useState(false);
+  const legalDockRef = useRef<HTMLDivElement>(null);
+  const [legalPanel, setLegalPanel] = useState<LegalPanelState>(() => readLegalPanelFromHash());
+
+  useEffect(() => {
+    const onHash = () => setLegalPanel(readLegalPanelFromHash());
+    globalThis.window.addEventListener("hashchange", onHash);
+    return () => globalThis.window.removeEventListener("hashchange", onHash);
+  }, []);
+
+  const toggleLegalPanel = (key: LegalPanelKey) => {
+    setLegalPanel((current) => (current === key ? null : key));
+  };
+
+  const revealTransparenceFromAssist = () => {
+    setLegalPanel("transparence");
+    globalThis.requestAnimationFrame(() => {
+      legalDockRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+  };
 
   const handleAiAssistPrefChange = (enabled: boolean) => {
     writeAiAssistSessionPref(enabled);
@@ -799,9 +813,11 @@ function App() {
 
   useEffect(() => {
     if (!roomCode || roomPhase !== "in_game") {
-      setLiveEventsMode("idle");
-      wsHadOpenedInEffectRef.current = false;
-      return;
+      const idleTimer = globalThis.setTimeout(() => {
+        setLiveEventsMode("idle");
+        wsHadOpenedInEffectRef.current = false;
+      }, 0);
+      return () => globalThis.clearTimeout(idleTimer);
     }
 
     const websocketBaseUrl = API_BASE_URL.replace("http://", "ws://").replace(
@@ -1055,41 +1071,37 @@ function App() {
     };
   }, [roomCode, roomPhase, participantId, pushToast]);
 
+  const inRoundResolutionCountdown =
+    roomPhase === "in_game" &&
+    turnState.roundState === "round_resolution" &&
+    turnState.roundResolutionStartedAtMs != null;
+  const hostGraceCountdownActive = hostAbsenceGraceUntilMs !== null;
+
   useEffect(() => {
-    if (turnState.roundState !== "round_resolution" || !turnState.roundResolutionStartedAtMs) {
+    if (!inRoundResolutionCountdown && !hostGraceCountdownActive) {
       return;
     }
-    const timer = globalThis.setInterval(() => {
-      setRoundResolutionBeatTick((n) => n + 1);
-    }, 250);
+    const tick = () => {
+      setDisplayTickMs(Date.now());
+    };
+    tick();
+    const timer = globalThis.setInterval(tick, 250);
     return () => globalThis.clearInterval(timer);
   }, [
+    inRoundResolutionCountdown,
+    hostGraceCountdownActive,
     turnState.roundState,
     turnState.roundResolutionStartedAtMs,
-    turnState.roundResolutionBeatMs,
+    hostAbsenceGraceUntilMs,
   ]);
 
-  useEffect(() => {
-    if (
-      hostAbsenceGraceUntilMs === null ||
-      Date.now() >= hostAbsenceGraceUntilMs
-    ) {
-      return;
-    }
-    const timer = globalThis.setInterval(() => {
-      setHostGraceBannerTick((n) => n + 1);
-    }, 500);
-    return () => globalThis.clearInterval(timer);
-  }, [hostAbsenceGraceUntilMs]);
-
-  void roundResolutionBeatTick;
   const roundBeatRemainingMs =
     turnState.roundState !== "round_resolution" || !turnState.roundResolutionStartedAtMs
       ? 0
       : Math.max(
           0,
           turnState.roundResolutionBeatMs -
-            (Date.now() - turnState.roundResolutionStartedAtMs),
+            (displayTickMs - turnState.roundResolutionStartedAtMs),
         );
 
   const liveTransportBanner =
@@ -1099,10 +1111,9 @@ function App() {
         ? "Temps reel suspendu — synchronisation automatique activee. La partie continue pour tous les joueurs."
         : null;
 
-  void hostGraceBannerTick;
   const hostGraceRemainingMs =
-    hostAbsenceGraceUntilMs !== null && Date.now() < hostAbsenceGraceUntilMs
-      ? Math.max(0, hostAbsenceGraceUntilMs - Date.now())
+    hostAbsenceGraceUntilMs !== null && displayTickMs < hostAbsenceGraceUntilMs
+      ? Math.max(0, hostAbsenceGraceUntilMs - displayTickMs)
       : 0;
 
   return (
@@ -1126,32 +1137,7 @@ function App() {
             </button>
           </section>
         ) : null}
-        <div className="app-mode-switch" role="tablist" aria-label="Mode application">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={appShell === "multi"}
-            className={appShell === "multi" ? undefined : "btn-secondary"}
-            onClick={() => setAppShell("multi")}
-            data-testid="multi-mode-tab"
-          >
-            Multijoueur
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={appShell === "solo"}
-            className={appShell === "solo" ? undefined : "btn-secondary"}
-            onClick={() => setAppShell("solo")}
-            data-testid="solo-mode-tab"
-          >
-            Apprentissage solo
-          </button>
-        </div>
-        {appShell === "solo" ? (
-          <SoloLearning onExit={() => setAppShell("multi")} />
-        ) : (
-          <>
+        <>
         <p>Cree une salle ou rejoins une salle existante avec ton pseudo.</p>
         <p className="muted">
           Regles V1: code de salle alphanumerique sur {ROOM_CODE_LENGTH} caracteres, capacite max{" "}
@@ -1609,19 +1595,19 @@ function App() {
           </p>
         ) : null}
           </>
-        )}
         <section className="ai-assist-panel" aria-labelledby="ai-assist-title">
           <h2 id="ai-assist-title">Assist IA (session navigateur)</h2>
           <p className="muted">
             Opt-in par session — desactive par defaut. Aucune cle API dans le bundle web (NFR-S2) ;
             configuration uniquement cote serveur.{" "}
-            <a
-              href="#transparence-ia"
+            <button
+              type="button"
               className="inline-legal-link"
               aria-label="Transparence — usage de l'IA (lien depuis le panneau assist)"
+              onClick={revealTransparenceFromAssist}
             >
               En savoir plus
-            </a>
+            </button>
           </p>
           <label className="ai-assist-toggle">
             <input
@@ -1700,8 +1686,8 @@ function App() {
           <h2 id="transparence-ia-title">Transparence — usage de l'IA (V1)</h2>
           <p>
             <strong>Perimetre.</strong> Les fonctions d'assist IA sont{" "}
-            <strong>optionnelles</strong>. Le multijoueur et le mode apprentissage solo restent{" "}
-            <strong>pleinement jouables sans IA</strong>. En V1, le panneau « Assist IA » sert surtout
+            <strong>optionnelles</strong>. Le multijoueur reste{" "}
+            <strong>pleinement jouable sans IA</strong>. En V1, le panneau « Assist IA » sert surtout
             a <strong>verifier</strong> si le serveur expose un canal assist configure ; ce n'est pas
             une promesse de fonctionnalites avancees dans la grille.
           </p>
@@ -1729,7 +1715,7 @@ function App() {
           <h2 id="about-title">A propos</h2>
           <p>Version du build: {APP_VERSION}</p>
           <p className="muted">
-            Notes: socle MVP multijoueur + apprentissage solo, legal et jointure de salle.
+            Notes: socle MVP multijoueur, legal et jointure de salle.
           </p>
         </section>
         <section

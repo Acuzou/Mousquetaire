@@ -488,7 +488,7 @@ describe("App", () => {
     ).toBeInTheDocument();
     expect(screen.getByText(/Version du build:/)).toBeInTheDocument();
     expect(
-      screen.getByText(/Notes: socle MVP multijoueur \+ apprentissage solo, legal et jointure de salle/),
+      screen.getByText(/Notes: socle MVP multijoueur, legal et jointure de salle/),
     ).toBeInTheDocument();
     expect(screen.getByText(/^Version du build: \d+\.\d+\.\d+/)).toBeInTheDocument();
     expect(
@@ -1348,15 +1348,4 @@ describe("App", () => {
     expect(document.querySelectorAll(".toast-message").length).toBeGreaterThanOrEqual(1);
   });
 
-  it("switches to solo learning without room code UI", async () => {
-    render(<App />);
-
-    fireEvent.click(screen.getByTestId("solo-mode-tab"));
-
-    await waitFor(() => {
-      expect(screen.getByTestId("solo-learning")).toBeInTheDocument();
-    });
-    expect(screen.queryByLabelText("Code de salle")).not.toBeInTheDocument();
-    expect(screen.getByText(/aucun code de salle/i)).toBeInTheDocument();
-  });
 });

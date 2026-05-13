@@ -177,31 +177,119 @@ p {
   margin-bottom: 0;
 }
 
-.legal-footer {
-  margin-top: 1.25rem;
+.legal-dock {
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+}
+
+.legal-dock__panel {
+  margin-bottom: 0.85rem;
+  padding: 0.85rem 1rem;
+  text-align: left;
+  border-radius: 0.65rem;
+  border: 1px solid var(--border);
+  background: linear-gradient(165deg, #ffffff 0%, #f8f7ff 100%);
+  box-shadow: 0 1px 2px rgb(15 23 42 / 6%);
+}
+
+.legal-dock__panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.legal-dock__close {
+  margin-top: 0;
+  flex-shrink: 0;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.8rem;
+  border-radius: 0.45rem;
+  background: var(--card);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+}
+
+.legal-dock__close:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.legal-dock__bar {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 1rem;
+  align-items: center;
+  gap: 0.45rem;
 }
 
-.legal-footer a {
-  color: var(--primary);
+.legal-dock__pill {
+  margin-top: 0;
+  border-radius: 999px;
+  padding: 0.42rem 0.95rem;
+  font-size: 0.82rem;
   font-weight: 600;
+  letter-spacing: 0.01em;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--foreground);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
+  box-shadow: 0 1px 0 rgb(15 23 42 / 4%);
+}
+
+.legal-dock__pill:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--primary) 55%, var(--border));
+  background: color-mix(in srgb, var(--primary) 8%, var(--card));
+}
+
+.legal-dock__pill:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.legal-dock__pill--active {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--card);
+  box-shadow: 0 2px 8px rgb(91 45 207 / 28%);
+}
+
+.legal-dock__pill:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 .inline-legal-link {
+  margin-top: 0;
+  padding: 0;
+  border: none;
+  background: none;
   color: var(--primary);
+  font: inherit;
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.inline-legal-link:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: 0.2rem;
 }
 
 .legal-panel {
-  margin-top: 1rem;
+  margin-top: 0;
   text-align: left;
-  border-top: 1px solid var(--border);
-  padding-top: 0.75rem;
+  border-top: none;
+  padding-top: 0;
 }
 
 .legal-panel h2 {
@@ -348,78 +436,6 @@ p {
   min-width: 44px;
   border-radius: 0.5rem;
   transition: background-color 0.2s ease;
-}
-
-.word-grid.word-grid-solo-nine {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.solo-workshop {
-  margin-top: 1rem;
-  text-align: left;
-}
-
-.solo-demo-clue {
-  font-weight: 600;
-}
-
-.app-mode-switch {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  justify-content: center;
-  margin-bottom: 1rem;
-}
-
-.app-mode-switch button {
-  margin-top: 0;
-}
-
-.app-mode-switch button[aria-selected="true"] {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
-}
-
-.solo-progress-hint {
-  margin-top: 0.5rem;
-  text-align: left;
-}
-
-.solo-resume-panel {
-  margin-top: 1rem;
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  background: var(--warning-surface);
-  text-align: left;
-}
-
-.solo-resume-panel button {
-  margin-right: 0.5rem;
-}
-
-.solo-completion-panel {
-  margin-top: 1rem;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  background: var(--card);
-  text-align: left;
-}
-
-.solo-completion-lead {
-  font-weight: 600;
-  margin-bottom: 0.75rem;
-}
-
-.solo-completion-recap {
-  margin: 0 0 1rem;
-  padding-left: 1.25rem;
-  text-align: left;
-}
-
-.solo-completion-recap li {
-  margin-bottom: 0.35rem;
 }
 
 .word-card.selected {
